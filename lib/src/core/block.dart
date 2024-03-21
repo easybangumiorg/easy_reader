@@ -10,6 +10,17 @@ mixin ElementSizeMixin<BlockDataType> on ElementBlock<BlockDataType> {
   late final Size size;
 }
 
+/// 混合位置
+mixin ElementOffsetMixin<BlockDataType> on ElementBlock<BlockDataType> {
+  late final Offset offset;
+}
+
+/// 混合区域
+mixin ElementRectMixin<BlockDataType>
+    on ElementSizeMixin<BlockDataType>, ElementOffsetMixin<BlockDataType> {
+  Rect get rect => Rect.fromLTWH(offset.dx, offset.dy, size.width, size.height);
+}
+
 /// 块
 abstract class ElementBlock<BlockDataType> {
   /// 块在文档中的全局索引
