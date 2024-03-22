@@ -1,5 +1,75 @@
 import 'dart:ui';
 
+///选择块
+class SelectedBlock {
+  /// 开始索引
+  final int beginIndex;
+
+  /// 结束索引
+  final int endIndex;
+
+  /// 开始块内部索引
+  /// -1表示整块
+  final int innerBeginIndex;
+
+  /// 结束块内部索引
+  /// -1表示整块
+  final int innerEndIndex;
+
+  /// 选择的块
+  final List<ElementBlock> _blocks;
+
+  /// 获取选择文本
+  String get text {
+    if (_blocks.isEmpty) {
+      return '';
+    }
+    if (_blocks.length == 1) {
+      if (_blocks.first is TextBlock) {
+        return (_blocks.first as TextBlock).data;
+      }
+      return '';
+    }
+    final str = StringBuffer();
+    for (int i = 0; i < _blocks.length; i++) {
+      final block = _blocks[i];
+      if (block is! TextBlock) {
+        continue;
+      }
+      String data = block.data;
+      if (i == 0) {
+        data = block.data.substring(innerBeginIndex);
+      } else if (i == _blocks.length - 1) {
+        data = block.data.substring(0, innerEndIndex);
+      }
+      str.write(data);
+    }
+    return str.toString();
+  }
+
+  SelectedBlock({
+    required this.beginIndex,
+    required this.innerBeginIndex,
+    required this.endIndex,
+    required this.innerEndIndex,
+    required List<ElementBlock> blocks,
+  }) : _blocks = blocks;
+
+  @override
+  int get hashCode =>
+      Object.hash(beginIndex, innerBeginIndex, endIndex, innerEndIndex);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is SelectedBlock &&
+        beginIndex == other.beginIndex &&
+        innerBeginIndex == other.innerBeginIndex &&
+        endIndex == other.endIndex &&
+        innerEndIndex == other.innerEndIndex;
+  }
+}
+
 /// 混合长度
 mixin ElementLengthMixin<BlockDataType> on ElementBlock<BlockDataType> {
   late final int length;
@@ -36,6 +106,7 @@ abstract class ElementBlock<BlockDataType> {
 
   @override
   bool operator ==(Object other) {
+    if (identical(this, other)) return true;
     return other is ElementBlock && other.index == index && other.data == data;
   }
 }
@@ -51,6 +122,7 @@ class TextBlock extends ElementBlock<String> with ElementLengthMixin {
 
   @override
   bool operator ==(Object other) {
+    if (identical(this, other)) return true;
     return other is TextBlock && super == other && other.length == length;
   }
 }
@@ -66,6 +138,7 @@ class ImageBlock extends ElementBlock<Uri> with ElementSizeMixin {
 
   @override
   bool operator ==(Object other) {
+    if (identical(this, other)) return true;
     return other is ImageBlock && super == other && other.size == size;
   }
 }
