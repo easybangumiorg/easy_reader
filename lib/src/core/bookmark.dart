@@ -13,11 +13,9 @@ class Bookmark {
   final int endIndex;
 
   /// 开始块内部索引
-  /// -1表示整块
   final int beginBlockIndex;
 
   /// 结束块内部索引
-  /// -1表示整块
   final int endBlockIndex;
 
   const Bookmark({
@@ -28,6 +26,24 @@ class Bookmark {
     required this.beginBlockIndex,
     required this.endBlockIndex,
   });
+
+  Bookmark copyWith({
+    String? name,
+    String? description,
+    int? beginIndex,
+    int? endIndex,
+    int? beginBlockIndex,
+    int? endBlockIndex,
+  }) {
+    return Bookmark(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      beginIndex: beginIndex ?? this.beginIndex,
+      endIndex: endIndex ?? this.endIndex,
+      beginBlockIndex: beginBlockIndex ?? this.beginBlockIndex,
+      endBlockIndex: endBlockIndex ?? this.endBlockIndex,
+    );
+  }
 
   @override
   int get hashCode => Object.hash(

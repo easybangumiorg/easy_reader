@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'core.dart';
+
 ///选择块
 class SelectedBlock {
   /// 开始索引
@@ -9,7 +11,6 @@ class SelectedBlock {
   final int endIndex;
 
   /// 开始块内部索引
-  /// -1表示整块
   final int innerBeginIndex;
 
   /// 结束块内部索引
@@ -38,9 +39,16 @@ class SelectedBlock {
       }
       String data = block.data;
       if (i == 0) {
+        if (innerBeginIndex >= block.length || innerBeginIndex < 0) {
+          throw EasyArgumentError('innerBeginIndex out of range');
+        }
         data = block.data.substring(innerBeginIndex);
       } else if (i == _blocks.length - 1) {
-        data = block.data.substring(0, innerEndIndex);
+        if (innerEndIndex > block.length || innerEndIndex < -1) {
+          throw EasyArgumentError('innerEndIndex out of range');
+        }
+        data =
+            block.data.substring(0, innerEndIndex == -1 ? null : innerEndIndex);
       }
       str.write(data);
     }
@@ -54,6 +62,22 @@ class SelectedBlock {
     required this.innerEndIndex,
     required List<ElementBlock> blocks,
   }) : _blocks = blocks;
+
+  SelectedBlock copyWith({
+    int? beginIndex,
+    int? innerBeginIndex,
+    int? endIndex,
+    int? innerEndIndex,
+    List<ElementBlock>? blocks,
+  }) {
+    return SelectedBlock(
+      beginIndex: beginIndex ?? this.beginIndex,
+      innerBeginIndex: innerBeginIndex ?? this.innerBeginIndex,
+      endIndex: endIndex ?? this.endIndex,
+      innerEndIndex: innerEndIndex ?? this.innerEndIndex,
+      blocks: blocks ?? _blocks,
+    );
+  }
 
   @override
   int get hashCode =>
@@ -117,6 +141,13 @@ class TextBlock extends ElementBlock<String> with ElementLengthMixin {
     length = data.length;
   }
 
+  TextBlock copyWith({int? index, String? data}) {
+    return TextBlock(
+      index: index ?? this.index,
+      data: data ?? this.data,
+    );
+  }
+
   @override
   int get hashCode => Object.hash(super.hashCode, length);
 
@@ -131,6 +162,14 @@ class TextBlock extends ElementBlock<String> with ElementLengthMixin {
 class ImageBlock extends ElementBlock<Uri> with ElementSizeMixin {
   ImageBlock({required super.index, required super.data, required Size size}) {
     this.size = size;
+  }
+
+  ImageBlock copyWith({int? index, Uri? data, Size? size}) {
+    return ImageBlock(
+      index: index ?? this.index,
+      data: data ?? this.data,
+      size: size ?? this.size,
+    );
   }
 
   @override
