@@ -2,20 +2,60 @@ import 'dart:ui';
 
 import 'core.dart';
 
-///选择块
-class SelectedBlock {
+/// 块范围
+class BlockRange {
   /// 开始索引
-  final int beginIndex;
+  final int begin;
 
   /// 结束索引
-  final int endIndex;
+  final int end;
 
   /// 开始块内部索引
-  final int innerBeginIndex;
+  final int innerBegin;
 
   /// 结束块内部索引
   /// -1表示整块
-  final int innerEndIndex;
+  final int innerEnd;
+
+  const BlockRange({
+    required this.begin,
+    required this.end,
+    required this.innerBegin,
+    required this.innerEnd,
+  });
+
+  BlockRange copyWith({
+    int? begin,
+    int? end,
+    int? innerBegin,
+    int? innerEnd,
+  }) {
+    return BlockRange(
+      begin: begin ?? this.begin,
+      end: end ?? this.end,
+      innerBegin: innerBegin ?? this.innerBegin,
+      innerEnd: innerEnd ?? this.innerEnd,
+    );
+  }
+
+  @override
+  int get hashCode => Object.hash(begin, end, innerBegin, innerEnd);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is BlockRange &&
+        begin == other.begin &&
+        end == other.end &&
+        innerBegin == other.innerBegin &&
+        innerEnd == other.innerEnd;
+  }
+}
+
+///选择块
+class SelectedBlock {
+  /// 选择范围
+  final BlockRange range;
 
   /// 选择的块
   final List<ElementBlock> _blocks;
@@ -39,16 +79,16 @@ class SelectedBlock {
       }
       String data = block.data;
       if (i == 0) {
-        if (innerBeginIndex >= block.length || innerBeginIndex < 0) {
-          throw EasyArgumentError('innerBeginIndex out of range');
+        if (range.innerBegin >= block.length || range.innerBegin < 0) {
+          throw EasyArgumentError('innerBegin out of range');
         }
-        data = block.data.substring(innerBeginIndex);
+        data = block.data.substring(range.innerBegin);
       } else if (i == _blocks.length - 1) {
-        if (innerEndIndex > block.length || innerEndIndex < -1) {
-          throw EasyArgumentError('innerEndIndex out of range');
+        if (range.innerEnd > block.length || range.innerEnd < -1) {
+          throw EasyArgumentError('innerEnd out of range');
         }
-        data =
-            block.data.substring(0, innerEndIndex == -1 ? null : innerEndIndex);
+        data = block.data
+            .substring(0, range.innerEnd == -1 ? null : range.innerEnd);
       }
       str.write(data);
     }
@@ -56,41 +96,27 @@ class SelectedBlock {
   }
 
   SelectedBlock({
-    required this.beginIndex,
-    required this.innerBeginIndex,
-    required this.endIndex,
-    required this.innerEndIndex,
+    required this.range,
     required List<ElementBlock> blocks,
   }) : _blocks = blocks;
 
   SelectedBlock copyWith({
-    int? beginIndex,
-    int? innerBeginIndex,
-    int? endIndex,
-    int? innerEndIndex,
+    BlockRange? range,
     List<ElementBlock>? blocks,
   }) {
     return SelectedBlock(
-      beginIndex: beginIndex ?? this.beginIndex,
-      innerBeginIndex: innerBeginIndex ?? this.innerBeginIndex,
-      endIndex: endIndex ?? this.endIndex,
-      innerEndIndex: innerEndIndex ?? this.innerEndIndex,
+      range: range ?? this.range,
       blocks: blocks ?? _blocks,
     );
   }
 
   @override
-  int get hashCode =>
-      Object.hash(beginIndex, innerBeginIndex, endIndex, innerEndIndex);
+  int get hashCode => Object.hash(range, _blocks);
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is SelectedBlock &&
-        beginIndex == other.beginIndex &&
-        innerBeginIndex == other.innerBeginIndex &&
-        endIndex == other.endIndex &&
-        innerEndIndex == other.innerEndIndex;
+    return other is SelectedBlock && range == other.range;
   }
 }
 

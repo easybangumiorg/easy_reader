@@ -4,27 +4,32 @@ class EasyReader {
   /// 块列表
   final List<ElementBlock> _blocks;
 
+  /// 首页
+  Page? _firstPage;
+
   EasyReader({required List<ElementBlock> blocks}) : _blocks = blocks;
 
   /// 选择块
   SelectedBlock getSelectedBlock({
-    required int beginIndex,
-    required int endIndex,
-    required int innerBeginIndex,
-    required int innerEndIndex,
+    required int begin,
+    required int end,
+    required int innerBegin,
+    required int innerEnd,
   }) {
-    if (beginIndex < 0 || beginIndex >= _blocks.length) {
-      throw EasyArgumentError('beginIndex out of range');
+    if (begin < 0 || begin >= _blocks.length) {
+      throw EasyArgumentError('begin out of range');
     }
-    if (endIndex < -1 || endIndex > _blocks.length) {
-      throw EasyArgumentError('endIndex out of range');
+    if (end < -1 || end > _blocks.length) {
+      throw EasyArgumentError('end out of range');
     }
     return SelectedBlock(
-      beginIndex: beginIndex,
-      endIndex: endIndex,
-      innerBeginIndex: innerBeginIndex,
-      innerEndIndex: innerEndIndex,
-      blocks: _blocks.sublist(beginIndex, endIndex == -1 ? null : endIndex),
+      range: BlockRange(
+        begin: begin,
+        end: end,
+        innerBegin: innerBegin,
+        innerEnd: innerEnd,
+      ),
+      blocks: _blocks.sublist(begin, end == -1 ? null : end),
     );
   }
 }

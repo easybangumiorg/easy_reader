@@ -1,1 +1,1 @@
-export 'reader_view.dart';
+export 'reader_view.dart' show ReaderView;

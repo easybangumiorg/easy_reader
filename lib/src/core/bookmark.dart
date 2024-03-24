@@ -1,3 +1,5 @@
+import 'core.dart';
+
 /// 书签
 class Bookmark {
   /// 书签名
@@ -6,48 +8,29 @@ class Bookmark {
   /// 描述
   final String description;
 
-  /// 开始索引
-  final int beginIndex;
-
-  /// 结束索引
-  final int endIndex;
-
-  /// 开始块内部索引
-  final int beginBlockIndex;
-
-  /// 结束块内部索引
-  final int endBlockIndex;
+  /// 范围,通常只有一个块
+  final BlockRange range;
 
   const Bookmark({
     required this.name,
     required this.description,
-    required this.beginIndex,
-    required this.endIndex,
-    required this.beginBlockIndex,
-    required this.endBlockIndex,
+    required this.range,
   });
 
   Bookmark copyWith({
     String? name,
     String? description,
-    int? beginIndex,
-    int? endIndex,
-    int? beginBlockIndex,
-    int? endBlockIndex,
+    BlockRange? range,
   }) {
     return Bookmark(
       name: name ?? this.name,
       description: description ?? this.description,
-      beginIndex: beginIndex ?? this.beginIndex,
-      endIndex: endIndex ?? this.endIndex,
-      beginBlockIndex: beginBlockIndex ?? this.beginBlockIndex,
-      endBlockIndex: endBlockIndex ?? this.endBlockIndex,
+      range: range ?? this.range,
     );
   }
 
   @override
-  int get hashCode => Object.hash(
-      name, description, beginIndex, beginBlockIndex, endIndex, endBlockIndex);
+  int get hashCode => Object.hash(name, description, range);
 
   @override
   bool operator ==(Object other) {
@@ -55,9 +38,6 @@ class Bookmark {
     return other is Bookmark &&
         name == other.name &&
         description == other.description &&
-        beginIndex == other.beginIndex &&
-        beginBlockIndex == other.beginBlockIndex &&
-        endIndex == other.endIndex &&
-        endBlockIndex == other.endBlockIndex;
+        range == other.range;
   }
 }

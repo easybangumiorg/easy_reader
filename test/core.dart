@@ -15,17 +15,17 @@ void main() {
     final reader = EasyReader(blocks: blocks);
     test('SelectedBlock', () {
       SelectedBlock selectedBlock = reader.getSelectedBlock(
-        beginIndex: 0,
-        endIndex: 4,
-        innerBeginIndex: 0,
-        innerEndIndex: -1,
+        begin: 0,
+        end: 4,
+        innerBegin: 0,
+        innerEnd: -1,
       );
       expect(selectedBlock.text, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
       selectedBlock = reader.getSelectedBlock(
-        beginIndex: 1,
-        endIndex: 4,
-        innerBeginIndex: 4,
-        innerEndIndex: 3,
+        begin: 1,
+        end: 4,
+        innerBegin: 4,
+        innerEnd: 3,
       );
       expect(selectedBlock.text, 'LMNOPQ');
     });
